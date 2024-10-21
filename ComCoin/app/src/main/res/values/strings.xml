@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">ComCoin</string>
+    <string name="app_logo">App Logo</string>
+    <string name="Begin">Begin</string>
+    <string name="commemorative">Commemorative</string>
+    <string name="image_here">image here</string>
+    <string name="new_coin_s_name_here">New coin\'s name here</string>
+    <string name="additional_info">Additional Info</string>
+    <string name="done">Done</string>
+    <string name="new_coin">New Coin</string>
+    <string name="back">Back</string>
+    <string name="coin">Coin</string>
+    <string name="edit">Edit</string>
+    <string name="collection">Collection</string>
+    <string name="add_new">Add New</string>
+    <string name="coin_picture">Coin picture</string>
+    <string name="text_placeholder">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</string>
+</resources>
