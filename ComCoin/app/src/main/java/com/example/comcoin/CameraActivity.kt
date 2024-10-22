@@ -1,7 +1,12 @@
 package com.example.comcoin
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -24,11 +29,13 @@ import java.util.concurrent.Executors
 
 class CameraActivity : AppCompatActivity() {
 
-    private lateinit var captureIV: ImageView
+//    private lateinit var captureIV: ImageView
     private lateinit var captureBtn: Button
     private lateinit var previewView: androidx.camera.view.PreviewView
     private lateinit var imageCapture: ImageCapture
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var drawable: Drawable
+    private lateinit var bitmap: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +56,8 @@ class CameraActivity : AppCompatActivity() {
 
         captureBtn.setOnClickListener {
             takePhoto()
+            val proximaPag = Intent(this, AddCoinActivity::class.java)
+            proximaPag.putExtra("ImagemTirada", bitmap)
         }
     }
 
@@ -98,8 +107,18 @@ class CameraActivity : AppCompatActivity() {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     // Handle the saved image Uri
                     val savedUri = Uri.fromFile(photoFile)
-                    captureIV.setImageURI(savedUri)
-                    Log.d("ADAWDAWFAWF", "DADAWDAWdDW")
+
+                    // Convert the saved image file to a Bitmap
+                    bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+
+                    // Convert the Bitmap to a Drawable
+                    drawable = BitmapDrawable(resources, bitmap)
+
+                    // Now, you can set the image to an ImageView or store the drawable for later use
+//                    captureIV.setImageDrawable(drawable)
+
+
+                    Log.d("PhotoCapture", "Image saved and converted to Drawable")
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -108,6 +127,7 @@ class CameraActivity : AppCompatActivity() {
             }
         )
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

@@ -12,6 +12,7 @@ class AddCoinActivity : AppCompatActivity() {
         val dbHandler = DBHandler (this)
         setContentView(R.layout.add_coin)
 
+        var edit = false
         val backBtn = findViewById<Button>(R.id.backBtn)
         val doneBtn = findViewById<Button>(R.id.doneBtn)
         val coinPic = findViewById<ImageView>(R.id.coinPic)
@@ -21,26 +22,45 @@ class AddCoinActivity : AppCompatActivity() {
         val defaultImg = R.drawable.camera_drawable
         coinPic.setImageResource(defaultImg)
         val imgResourceAtual = defaultImg
+        var originalName = ""
         backBtn.setOnClickListener{
             val proximaPagina = Intent(this, HomeActivity()::class.java)
             startActivity(proximaPagina)
         }
 
-        doneBtn.setOnClickListener{
+        if(intent.getBooleanExtra("edit", false)){
+            originalName = intent.getStringExtra("NomeEdit").toString()
+            newCoinName.setText(intent.getStringExtra("NomeEdit"))
+            coinPic.setImageResource(intent.getIntExtra("ImageEdit", defaultImg))
+            addInfo.setText(intent.getStringExtra("DescriptionEdit"))
+            isCom.isActivated = intent.getBooleanExtra("CommemorativeEdit", false)
+            edit = true
+        }
+
+            doneBtn.setOnClickListener{
+
+                if(!edit){
             val novoNome = newCoinName.text.toString()
             val novaDesc = addInfo.text.toString()
             val novaImagem = imgResourceAtual
-            val novaIsCom = isCom.isActivated
+            val novaIsCom = isCom.isChecked
             if (novoNome.isEmpty() || novaDesc.isEmpty()) {
                 Toast.makeText(this, "Please enter all the data..", Toast.LENGTH_SHORT).show()
-            }
-            else{
+                }
+
             //Função que adicione a moeda à base de dados
             dbHandler.addNewCoin(novoNome, novaDesc, novaImagem, novaIsCom)
-                Toast.makeText(this, "Moeda criada com sucesso!!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Coin created!", Toast.LENGTH_SHORT).show()
                 val proximaPagina = Intent(this, HomeActivity()::class.java)
                 startActivity(proximaPagina)
+
+            } else {
+                    dbHandler.updateCoin(originalName, newCoinName.text.toString(), addInfo.text.toString(), intent.getIntExtra("ImageEdit", defaultImg), isCom.isChecked)
+                    Toast.makeText(this, "Coin edited!", Toast.LENGTH_SHORT).show()
+                    val proximaPagina = Intent(this, HomeActivity()::class.java)
+                    startActivity(proximaPagina)
             }
+
         }
 
         coinPic.setOnClickListener{

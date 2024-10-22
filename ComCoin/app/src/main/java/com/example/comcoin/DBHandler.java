@@ -12,7 +12,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     // creating a constant variables for our database.
     // below variable is for our database name.
-    private static final String DB_NAME = "coursedb";
+    private static final String DB_NAME = "coinsdb";
 
     // below int is our database version
     private static final int DB_VERSION = 1;
@@ -96,7 +96,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     // we have created a new method for reading all the courses.
-    public ArrayList<Coins> readCourses()
+    public ArrayList<Coins> readCoins()
     {
         // on below line we are creating a
         // database for reading our database.
@@ -115,12 +115,14 @@ public class DBHandler extends SQLiteOpenHelper {
         if (cursorCoins.moveToFirst()) {
             do {
                 // on below line we are adding the data from
+                Boolean Com = cursorCoins.getInt(4) > 0;
                 // cursor to our array list.
                 coinsArrayList.add(new Coins(
                         cursorCoins.getString(1),
                         cursorCoins.getInt(3),
                         cursorCoins.getString(2),
-                        cursorCoins.getExtras().getBoolean("is_commemorative")));
+                        Com));
+
             } while (cursorCoins.moveToNext());
             // moving our cursor to next.
         }
@@ -130,4 +132,27 @@ public class DBHandler extends SQLiteOpenHelper {
         return coinsArrayList;
     }
 
+    public void deleteCoin(String coinName){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // on below line we are calling a method to delete our
+        // course and we are comparing it with our course name.
+        db.delete(TABLE_NAME, "name=?", new String[]{coinName});
+        db.close();
+    }
+
+    public void updateCoin(String originalName, String novoNome, String novaDesc, int novaImg, boolean novoCom){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(NAME_COL, novoNome);
+        values.put(IMAGE_COL, novaImg);
+        values.put(DESCRIPTION_COL, novaDesc);
+        values.put(ISCOMMEMORATIVE_COL, novoCom);
+
+        db.update(TABLE_NAME, values, "name=?", new String[]{originalName});
+        db.close();
+
+    }
 }

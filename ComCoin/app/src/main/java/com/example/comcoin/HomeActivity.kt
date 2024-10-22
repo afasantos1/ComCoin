@@ -14,6 +14,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var newRecyclerView: RecyclerView
     private lateinit var newArrayList: ArrayList<Coins>
+    private lateinit var newCoinList: ArrayList<Coins>
     lateinit var imageID: Array<Int>
     lateinit var name: Array<String>
     lateinit var desc: Array<String>
@@ -23,27 +24,45 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.start_menu)
 
+        val dbHandler = DBHandler (this)
         val newCoin = findViewById<Button>(R.id.newCoin)
         val backBtn = findViewById<Button>(R.id.backBtn)
 
 
 
         //--------------------------------IMPLEMENTAR BASE DE DADOS--------------------------------------
-        name = arrayOf("MOEDA", "Moeda", "Moeda", "Moeda")
-
-
-        imageID = arrayOf(
-            R.drawable.camera_drawable,
-            R.drawable.comcoinlogonovo,
-            R.drawable.comcoinlogonovo,
-            R.drawable.comcoinlogonovo
-        )
-
-        desc = arrayOf(" teste ", " ", " ", " ")
-
-        com = arrayOf(true, false, false, true)
+        newCoinList = dbHandler.readCoins()
         //----------------------------------------------------------------------------------------------
 
+
+        newRecyclerView = findViewById(R.id.recyclerView)
+        newRecyclerView.layoutManager = LinearLayoutManager(this)
+        newRecyclerView.setHasFixedSize(true)
+
+        newArrayList = arrayListOf()
+        getUserData()
+
+        backBtn.setOnClickListener {
+            val proximaPagina = Intent(this, MainActivity::class.java)
+            startActivity(proximaPagina)
+
+        }
+
+        newCoin.setOnClickListener {
+            Log.d("Teste", "AQUI")
+            val proximaPagina = Intent(this, AddCoinActivity::class.java)
+            startActivity(proximaPagina)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setContentView(R.layout.start_menu)
+        val dbHandler = DBHandler (this)
+        val newCoin = findViewById<Button>(R.id.newCoin)
+        val backBtn = findViewById<Button>(R.id.backBtn)
+
+        newCoinList = dbHandler.readCoins()
 
         newRecyclerView = findViewById(R.id.recyclerView)
         newRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -55,6 +74,7 @@ class HomeActivity : AppCompatActivity() {
         backBtn.setOnClickListener {
             val proximaPagina = Intent(this, MainActivity::class.java)
             startActivity(proximaPagina)
+
         }
 
         newCoin.setOnClickListener {
@@ -65,8 +85,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun getUserData() {
-        for (i in imageID.indices) {
-            val coin = Coins(name[i], imageID[i] , desc[i], com[i])
+        for (i in newCoinList) {
+            val coin = Coins(i.Name, i.Image , i.Description, i.Comemorativa)
             newArrayList.add(coin)
         }
         val adapter = RecAdapter(this, newArrayList)
@@ -74,4 +94,5 @@ class HomeActivity : AppCompatActivity() {
 
 
     }
+
 }
