@@ -3,8 +3,6 @@ import android.os.Bundle
 import android.widget.*
 import android.content.Intent
 import android.util.Log
-import android.view.View
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,9 +13,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var newRecyclerView: RecyclerView
     private lateinit var newArrayList: ArrayList<Coins>
     private lateinit var newCoinList: ArrayList<Coins>
-    lateinit var imageID: Array<Int>
     lateinit var name: Array<String>
-    lateinit var desc: Array<String>
     lateinit var com : Array<Boolean>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +64,7 @@ class HomeActivity : AppCompatActivity() {
         newRecyclerView.layoutManager = LinearLayoutManager(this)
         newRecyclerView.setHasFixedSize(true)
 
-        newArrayList = arrayListOf<Coins>()
+        newArrayList = arrayListOf()
         getUserData()
 
         backBtn.setOnClickListener {
@@ -86,7 +82,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun getUserData() {
         for (i in newCoinList) {
-            val coin = Coins(i.Name, i.Image , i.Description, i.Comemorativa)
+            val coin = Coins(i.Name, i.ImageURI , i.Description, i.Comemorativa)
             newArrayList.add(coin)
         }
         val adapter = RecAdapter(this, newArrayList)

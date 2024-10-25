@@ -61,7 +61,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
     // this method is use to add new course to our sqlite database.
-    public void addNewCoin(String coinName, String coinDescription, int coinImage, Boolean isCommemorative) {
+    public void addNewCoin(String coinName, String coinDescription, String coinImageURI, Boolean isCommemorative) {
 
         // on below line we are creating a variable for 
         // our sqlite database and calling writable method 
@@ -76,7 +76,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // along with its key and value pair.
         values.put(NAME_COL, coinName);
         values.put(DESCRIPTION_COL, coinDescription);
-        values.put(IMAGE_COL, coinImage);
+        values.put(IMAGE_COL, coinImageURI);
         values.put(ISCOMMEMORATIVE_COL, isCommemorative);
 
         // after adding all values we are passing
@@ -119,7 +119,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 // cursor to our array list.
                 coinsArrayList.add(new Coins(
                         cursorCoins.getString(1),
-                        cursorCoins.getInt(3),
+                        cursorCoins.getString(3),
                         cursorCoins.getString(2),
                         Com));
 
@@ -141,13 +141,13 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateCoin(String originalName, String novoNome, String novaDesc, int novaImg, boolean novoCom){
+    public void updateCoin(String originalName, String novoNome, String novaDesc, String novaImgURI, boolean novoCom){
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(NAME_COL, novoNome);
-        values.put(IMAGE_COL, novaImg);
+        values.put(IMAGE_COL, novaImgURI);
         values.put(DESCRIPTION_COL, novaDesc);
         values.put(ISCOMMEMORATIVE_COL, novoCom);
 

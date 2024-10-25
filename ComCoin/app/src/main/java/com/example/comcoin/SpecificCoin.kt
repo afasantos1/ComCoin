@@ -1,6 +1,7 @@
 package com.example.comcoin
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
@@ -18,9 +19,9 @@ class SpecificCoin : AppCompatActivity() {
         val coinName = findViewById<TextView>(R.id.coinName)
         val coinDesc = findViewById<TextView>(R.id.coinDesc)
         val star = findViewById<ImageView>(R.id.commemorativeStar)
-        val imgCoin = intent.getIntExtra("coinImage", 0)
+        val imgCoin = intent.getStringExtra("coinImage")
 
-        coinPic.setImageResource(imgCoin)
+        coinPic.setImageURI(Uri.parse(imgCoin))
         coinName.text = intent.getStringExtra("coinName")
         coinDesc.text = intent.getStringExtra("coinDescription")
 
@@ -47,7 +48,8 @@ class SpecificCoin : AppCompatActivity() {
             proximaPag.putExtra("edit", true)
             proximaPag.putExtra("NomeEdit", coinName.text)
             proximaPag.putExtra("DescriptionEdit", coinDesc.text)
-            proximaPag.putExtra("ImageEdit", imgCoin)
+            proximaPag.putExtra("ImageEdit", imgCoin.toString())
+            Log.d("imgCoin Specific Coin", imgCoin.toString())
             proximaPag.putExtra("CommemorativeEdit", intent.getBooleanExtra("Comemorativa", false))
             startActivity(proximaPag)
         }

@@ -2,6 +2,8 @@ package com.example.comcoin
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +34,9 @@ class RecAdapter(private val context: Context, private val coinsList: ArrayList<
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentItem = coinsList[position]
-        holder.coinImage.setImageResource(currentItem.Image)
+        holder.coinImage.setImageURI(Uri.parse(currentItem.ImageURI))
+        Log.d("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", Uri.parse(currentItem.ImageURI).toString())
+        Log.d("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", currentItem.ImageURI)
         holder.coinName.text = currentItem.Name
     }
 
@@ -46,7 +50,7 @@ class RecAdapter(private val context: Context, private val coinsList: ArrayList<
                 if (position != RecyclerView.NO_POSITION) {
                     val selectedCoin = coinsList[position]
                     val intent = Intent(context, SpecificCoin::class.java).apply {
-                        putExtra("coinImage", selectedCoin.Image)
+                        putExtra("coinImage", selectedCoin.ImageURI)
                         putExtra("coinName", selectedCoin.Name)
                         putExtra("coinDescription", selectedCoin.Description)
                         putExtra("Comemorativa", selectedCoin.Comemorativa)

@@ -11,7 +11,9 @@
         android:layout_height="match_parent"
         android:layout_above="@id/captureBtn"
         tools:layout_editor_absoluteX="-173dp"
-        tools:layout_editor_absoluteY="-16dp" />
+        tools:layout_editor_absoluteY="-16dp" >
+
+    </androidx.camera.view.PreviewView>
 
     <Button
         android:id="@+id/captureBtn"
@@ -25,4 +27,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.85" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="176dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="10dp"
+        android:background="#00000000"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:text="The picture will be saved in your gallery"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/captureBtn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
