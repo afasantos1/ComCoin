@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "948070942182",
+    "project_id": "comcoin-a578b",
+    "storage_bucket": "comcoin-a578b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:948070942182:android:d15837f7ecbce6bf4c8227",
+        "android_client_info": {
+          "package_name": "com.example.comcoin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVLdj6gsGz6LNEfRevkS_cja4ygxL95MQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
