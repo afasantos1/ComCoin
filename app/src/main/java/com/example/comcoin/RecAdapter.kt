@@ -11,6 +11,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.imageview.ShapeableImageView
 
+
+// Classe usada para definir dinamicamente as views na pagina principal. Recebe um arrayList de moedas e cria views para cada moeda
 class RecAdapter(private val context: Context, private val coinsList: ArrayList<Coins>) : RecyclerView.Adapter<RecAdapter.MyViewHolder>() {
 
     private var mListener: OnItemClickListener? = null
@@ -33,11 +35,9 @@ class RecAdapter(private val context: Context, private val coinsList: ArrayList<
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val currentItem = coinsList[position]
-        holder.coinImage.setImageURI(Uri.parse(currentItem.ImageURI))
-        Log.d("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", Uri.parse(currentItem.ImageURI).toString())
-        Log.d("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", currentItem.ImageURI)
-        holder.coinName.text = currentItem.Name
+        val currentItem = coinsList[position] // Selecionar moeda a utilizar
+        holder.coinImage.setImageURI(Uri.parse(currentItem.ImageURI)) // Definir imagem na ImageView
+        holder.coinName.text = currentItem.Name // Definir nome na TextView
     }
 
     inner class MyViewHolder(itemView: View, listener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
@@ -45,7 +45,7 @@ class RecAdapter(private val context: Context, private val coinsList: ArrayList<
         val coinName: TextView = itemView.findViewById(R.id.coin_name)
 
         init {
-            itemView.setOnClickListener {
+            itemView.setOnClickListener { // definir que a nova itemView adicionada é clicável
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     val selectedCoin = coinsList[position]

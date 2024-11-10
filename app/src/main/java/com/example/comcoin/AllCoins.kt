@@ -18,6 +18,9 @@ import android.widget.TextView
 
 
 class AllCoins : AppCompatActivity() {
+
+    // Este controlador está associado a uma página que contém, listadas, todas as moedas não comemorativas
+
     lateinit var images : List<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,24 +31,24 @@ class AllCoins : AppCompatActivity() {
             insets
         }
 
-        val assetManager = this.assets
-        val directoryPath = "Default"
-        images = assetManager.list(directoryPath)?.filter { it.endsWith(".png") }!!
+        val assetManager = this.assets // Usado para ir buscar a pasta com as imagens aos assets
+        val directoryPath = "Default" // Nome da pasta
+        images = assetManager.list(directoryPath)?.filter { it.endsWith(".png") }!! // Dos ficheiros da pasta, apenas seleciona aqueles que têm a extensão .png
 
-        val layoutHorizontal = findViewById<LinearLayout>(R.id.layoutHorizontal)
+
         val leftColumnLayout = findViewById<LinearLayout>(R.id.leftColumnLayout)
         val rightColumnLayout = findViewById<LinearLayout>(R.id.rightColumnLayout)
         val backBtn = findViewById<Button>(R.id.backBtn)
         val searchBox = findViewById<EditText>(R.id.searchBox)
 
-
+        // Usamos um TextWatcher para que o que o utilizador inserir na searchBox seja imediatamente usado enquanto é alterado, não necessitando de um botão, por exemplo
         searchBox.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 leftColumnLayout.removeAllViews()
-                rightColumnLayout.removeAllViews()
+                rightColumnLayout.removeAllViews() // No momento em que é alterado o texto da searchBox, ambas as colunas são limpas para os seus conteúdos serem filtrados
                 }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -68,6 +71,7 @@ class AllCoins : AppCompatActivity() {
 
     }
 
+    // Função usada para carregar especificamente imagens dos assets, transformando-as em bitmaps para poderem ser utilizadas mais tarde
     fun loadImageFromAssets(fileName: String, imageView: ImageView) {
         val assetManager = this.assets
         val inputStream = assetManager.open("Default/$fileName")
@@ -76,38 +80,39 @@ class AllCoins : AppCompatActivity() {
         inputStream.close()
     }
 
+    // Função auxiliar apenas usada para retirar o sufixo .png dos nomes das imagens
     fun cutString(main: String, toRemove: String): String {
         return main.replace(toRemove, "").removeSuffix(".png")
     }
 
+    // Insere as imagens e texto relativo a cada imagem na view, dividindo-as por duas colunas
     fun createViews(images : List<String>, leftColumnLayout : LinearLayout, rightColumnLayout : LinearLayout){
-        images?.forEachIndexed { index, fileName ->
+        images.forEachIndexed { index, fileName ->
 
 
-            // Create a new ImageView for each image
+            // Cria uma ImageView para cada imagem
             val imageView = ImageView(this).apply {
-                // Set uniform layout parameters for fixed size
+                // Definição de tamanho para todas as ImageViews adicionadas terem as mesmas dimensões
                 layoutParams = LinearLayout.LayoutParams(
                     (200 * context.resources.displayMetrics.density).toInt(),
                     (200 * context.resources.displayMetrics.density).toInt()
 
                 )
-                scaleType = ImageView.ScaleType.CENTER_CROP // Crop to fill the fixed size
+                scaleType = ImageView.ScaleType.CENTER_CROP
             }.apply {
 
-                // Load the image from assets into the new ImageView
+                // Função definida acima. Usamos para associar a imagem à ImageView
                 loadImageFromAssets(fileName, this)
             }
 
             val textView = TextView(this).apply {
-                text = cutString(fileName, "Default")
-                setPadding(0, 0, 0, 16) // Adds padding to the bottom (16 pixels here as an example)
-                gravity = Gravity.CENTER // Centers the text within the TextView
+                text = cutString(fileName, "Default") // Como os nomes de todas as imagens seguem o formato "PaísDefault.png" ou "PaísDefault{numero}.png", cortamos o nome de forma a dar "País" ou "País{numero}"
+                setPadding(0, 0, 0, 16)
+                gravity = Gravity.CENTER
             }
 
 
-
-            // Add the ImageView to the left or right column alternately
+            // Divisão das imagens e texto pelas colunas
             if (index % 2 == 0) {
                 leftColumnLayout.addView(imageView)
                 leftColumnLayout.addView(textView)
@@ -118,12 +123,13 @@ class AllCoins : AppCompatActivity() {
         }
     }
 
+    // Filtragem das imagens
     fun findByName(nome: String, lista: List<String>): ArrayList<String> {
         val novaLista = ArrayList<String>()
-        val nomeLower = nome.lowercase() // Convert the search term to lowercase
+        val nomeLower = nome.lowercase() // Convertemos o valor inserido para minusculas
 
         for (i in lista) {
-            if (i.lowercase().startsWith(nomeLower)) { // Convert each item to lowercase for comparison
+            if (i.lowercase().startsWith(nomeLower)) { // Ao comparar, metemos tudo em minusculas para a nossa filtragem nao ser case-sensitive
                 novaLista.add(i)
             }
         }

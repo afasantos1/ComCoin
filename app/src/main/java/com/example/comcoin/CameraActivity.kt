@@ -30,6 +30,8 @@ import java.util.concurrent.Executors
 
 class CameraActivity : AppCompatActivity() {
 
+    // Controlador associado à view encarregue de tirar foto de moeda
+
     private lateinit var captureBtn: Button
     private lateinit var previewView: androidx.camera.view.PreviewView
     private lateinit var imageCapture: ImageCapture
@@ -58,10 +60,10 @@ class CameraActivity : AppCompatActivity() {
          isCom = intent.getBooleanExtra("isCom", false)
          edit = intent.getBooleanExtra("edit", false)
 
-            // Initialize the camera executor
+            // Inicializar camera
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        // Request camera permission if needed
+        // Tratamento de permissões
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             startCamera()
         } else {
@@ -79,25 +81,24 @@ class CameraActivity : AppCompatActivity() {
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            // Preview UseCase
+            // Projeta imagem da camara na previewView
             val preview = Preview.Builder().build().also {
                 it.surfaceProvider = previewView.surfaceProvider
             }
 
-            // ImageCapture UseCase
+            // Prepara a captura de imagem
             imageCapture = ImageCapture.Builder().build()
 
-            // Select back camera as a default
+            // Define a camera traseira como default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
-                // Unbind all use cases before rebinding
+                // Dá unibind em tudo antes de dar rebind
                 cameraProvider.unbindAll()
 
-                // Bind use cases to camera
+                // Dá bind em todos os useCases na Camera
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture)
 
@@ -109,29 +110,29 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun takePhoto() {
-        // Create file in internal storage to save the picture taken
-        val timestamp = System.currentTimeMillis() // Using timestamp, we can assure that the pictures wont get overriten
-        val photoFile = File(filesDir, "camera_photo_$timestamp.jpg")
+        // Cria um ficheiro dentro do armazenamento interno para guardar a foto
+        val timestamp = System.currentTimeMillis() // Ao usar um time stamp, podemos garantir que todas as fotos sao guardadas com paths diferentes e não há overrites
+        val photoFile = File(filesDir, "comCoin_$timestamp.jpg")
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-        // Capture image
+        // Captura de imagem
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
 
-                    // Create an Intent to pass the URI of the internal storage file to the next Activity
-                    val uriNovo = Uri.fromFile(photoFile) // Create URI for the internal storage file
+                    // A partir daqui, usaremos o URI com o path para acessar cada imagem quando necessário
+                    val uriNovo = Uri.fromFile(photoFile) // Obtenção do URI da imagem guardada
                     val proximaPag = Intent(this@CameraActivity, AddCoinActivity::class.java)
-                    proximaPag.putExtra("URI", uriNovo.toString()) // Pass the URI
+                    proximaPag.putExtra("URI", uriNovo.toString())
                     proximaPag.putExtra("PhotoTaken", true)
                     proximaPag.putExtra("coinName", nomeCoin)
                     proximaPag.putExtra("coinDescription", addInfo)
                     proximaPag.putExtra("isCom", isCom)
                     proximaPag.putExtra("updateEdit", edit)
-                    proximaPag.putExtra("nomeOriginal", intent.getStringExtra("nomeOriginal"))
+                    proximaPag.putExtra("nomeOriginal", intent.getStringExtra("nomeOriginal")) // Caso a camera seja inicializada com intuito de edição, temos de voltar a passar os dados originais para podermos utilizá-los na função de edição
                     proximaPag.putExtra("imgOriginal", intent.getStringExtra("imgOriginal"))
                     startActivity(proximaPag)
                     finish()
@@ -143,13 +144,9 @@ class CameraActivity : AppCompatActivity() {
             }
         )
     }
-
-
-
-
     override fun onDestroy() {
         super.onDestroy()
-        // Shutdown the camera executor
+        // Forçar o executor da camera a desligar
         cameraExecutor.shutdown()
     }
 

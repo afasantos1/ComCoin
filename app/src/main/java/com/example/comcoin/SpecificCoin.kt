@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 
 class SpecificCoin : AppCompatActivity() {
+
+    // Controlador associado à view com apenas os detalhes de uma moeda
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.specific_coin)
@@ -26,9 +29,8 @@ class SpecificCoin : AppCompatActivity() {
         coinName.text = intent.getStringExtra("coinName")
         coinDesc.text = intent.getStringExtra("coinDescription")
 
-        if (intent.getBooleanExtra("Comemorativa", false))
-        {
-            star.setImageResource(android.R.drawable.btn_star_big_on)
+        if (intent.getBooleanExtra("Comemorativa", false)) {
+            star.setImageResource(android.R.drawable.btn_star_big_on) // alterar a cor da estrela conforme a moeda seja comemorativa ou nao
         }
 
         backBtn.setOnClickListener {
@@ -38,8 +40,8 @@ class SpecificCoin : AppCompatActivity() {
 
         elimBtn.setOnClickListener {
             val dbHandler = DBHandler (this)
-            dbHandler.deleteCoin(intent.getStringExtra("coinImage"))
-            deletePhoto(Uri.parse(imgCoin))
+            dbHandler.deleteCoin(intent.getStringExtra("coinImage")) // Elimina a moeda da base de dados
+            deletePhoto(Uri.parse(imgCoin)) // Elimina a imagem da moeda do armazenamento interno
             Toast.makeText(this, "Coin Eliminated", Toast.LENGTH_SHORT).show()
             val proximaPag = Intent(this, HomeActivity::class.java)
             startActivity(proximaPag)
@@ -48,7 +50,7 @@ class SpecificCoin : AppCompatActivity() {
 
         editBtn.setOnClickListener {
             val proximaPag = Intent(this, AddCoinActivity::class.java)
-            proximaPag.putExtra("edit", true)
+            proximaPag.putExtra("edit", true) // Valor usado para alterar o funcionamento da view chamada
             proximaPag.putExtra("NomeEdit", coinName.text)
             proximaPag.putExtra("DescriptionEdit", coinDesc.text)
             proximaPag.putExtra("ImageEdit", imgCoin.toString())
@@ -60,6 +62,7 @@ class SpecificCoin : AppCompatActivity() {
 
     }
 
+    // Função que apaga a imagem do armazenamento interno
     fun deletePhoto(uri: Uri) {
         // Convert the URI to a File object
         val file = File(uri.path ?: return) // Safely handle null path

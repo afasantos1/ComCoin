@@ -11,6 +11,10 @@ import java.util.ArrayList;
 
 public class DBHandler extends SQLiteOpenHelper {
 
+    // Handler da Database - Fonte: https://www.geeksforgeeks.org/how-to-create-and-add-data-to-sqlite-database-in-android/
+    // O código base é similar, apenas com algumas alterações de forma a ser ajustado à base de dados necessária na ComCoin. Decidi deixar os comentários originais porque me pareceram bastante explicativos
+
+
     // creating a constant variables for our database.
     // below variable is for our database name.
     private static final String DB_NAME = "coinsdb";
