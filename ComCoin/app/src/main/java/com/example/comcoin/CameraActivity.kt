@@ -7,10 +7,12 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.provider.MediaStore
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -28,6 +30,8 @@ import java.util.concurrent.Executors
 
 class CameraActivity : AppCompatActivity() {
 
+    // Controlador associado à view encarregue de tirar foto de moeda
+
     private lateinit var captureBtn: Button
     private lateinit var previewView: androidx.camera.view.PreviewView
     private lateinit var imageCapture: ImageCapture
@@ -37,6 +41,7 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var nomeCoin : String
     private lateinit var addInfo : String
     private var isCom = false
+    private var edit = false
 
 
 
@@ -45,17 +50,20 @@ class CameraActivity : AppCompatActivity() {
         setContentView(R.layout.camera)
 
         captureBtn = findViewById(R.id.captureBtn)
+        val animation = AnimationUtils.loadAnimation(this, R.anim.cam_button_click_anim)
+
         previewView = findViewById(R.id.captureImageView)
 
 
          nomeCoin = intent.getStringExtra("NomeCoin").toString()
          addInfo = intent.getStringExtra("DescricaoCoin").toString()
          isCom = intent.getBooleanExtra("isCom", false)
+         edit = intent.getBooleanExtra("edit", false)
 
-            // Initialize the camera executor
+            // Inicializar camera
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        // Request camera permission if needed
+        // Tratamento de permissões
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             startCamera()
         } else {
@@ -63,6 +71,8 @@ class CameraActivity : AppCompatActivity() {
         }
 
         captureBtn.setOnClickListener {
+            captureBtn.startAnimation(animation)
+            Toast.makeText(this, "Saving...", Toast.LENGTH_SHORT).show()
             takePhoto()
         }
 
@@ -71,25 +81,24 @@ class CameraActivity : AppCompatActivity() {
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            // Preview UseCase
+            // Projeta imagem da camara na previewView
             val preview = Preview.Builder().build().also {
                 it.surfaceProvider = previewView.surfaceProvider
             }
 
-            // ImageCapture UseCase
+            // Prepara a captura de imagem
             imageCapture = ImageCapture.Builder().build()
 
-            // Select back camera as a default
+            // Define a camera traseira como default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
-                // Unbind all use cases before rebinding
+                // Dá unibind em tudo antes de dar rebind
                 cameraProvider.unbindAll()
 
-                // Bind use cases to camera
+                // Dá bind em todos os useCases na Camera
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture)
 
@@ -101,37 +110,32 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun takePhoto() {
-        // Create file to save the image
-        val photoFile = File(filesDir, "camera_photo.jpg")
+        // Cria um ficheiro dentro do armazenamento interno para guardar a foto
+        val timestamp = System.currentTimeMillis() // Ao usar um time stamp, podemos garantir que todas as fotos sao guardadas com paths diferentes e não há overrites
+        val photoFile = File(filesDir, "comCoin_$timestamp.jpg")
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-        // Capture image
+        // Captura de imagem
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
 
-                    // Convert the saved image file to a Bitmap
-                    bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
-                    bitmap = rotateBitmap90Degrees(bitmap)
-
-                    // Now that the bitmap is ready, pass it to the next activity
-                    val stream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                    saveBitmapImage(bitmap)
-
-                    // Create Intent to pass the Bitmap to the next Activity
+                    // A partir daqui, usaremos o URI com o path para acessar cada imagem quando necessário
+                    val uriNovo = Uri.fromFile(photoFile) // Obtenção do URI da imagem guardada
                     val proximaPag = Intent(this@CameraActivity, AddCoinActivity::class.java)
                     proximaPag.putExtra("URI", uriNovo.toString())
                     proximaPag.putExtra("PhotoTaken", true)
                     proximaPag.putExtra("coinName", nomeCoin)
                     proximaPag.putExtra("coinDescription", addInfo)
                     proximaPag.putExtra("isCom", isCom)
+                    proximaPag.putExtra("updateEdit", edit)
+                    proximaPag.putExtra("nomeOriginal", intent.getStringExtra("nomeOriginal")) // Caso a camera seja inicializada com intuito de edição, temos de voltar a passar os dados originais para podermos utilizá-los na função de edição
+                    proximaPag.putExtra("imgOriginal", intent.getStringExtra("imgOriginal"))
                     startActivity(proximaPag)
-
-                    Log.d("PhotoCapture", "Image saved and converted to Drawable")
+                    finish()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -140,56 +144,10 @@ class CameraActivity : AppCompatActivity() {
             }
         )
     }
-
-
-
     override fun onDestroy() {
         super.onDestroy()
-        // Shutdown the camera executor
+        // Forçar o executor da camera a desligar
         cameraExecutor.shutdown()
-    }
-
-    private fun saveBitmapImage(bitmap: Bitmap) {
-        val timestamp = System.currentTimeMillis()
-
-        //Tell the media scanner about the new file so that it is immediately available to the user.
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-        values.put(MediaStore.Images.Media.DATE_ADDED, timestamp)
-        values.put(MediaStore.Images.Media.DATE_TAKEN, timestamp)
-        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/" + getString(R.string.app_name))
-        values.put(MediaStore.Images.Media.IS_PENDING, true)
-        val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-        if (uri != null) {
-            uriNovo = uri.toString().let {
-                URI.create(it)
-            }!!
-            Log.d("URI AQUI", uriNovo.toString())
-            try {
-                val outputStream = contentResolver.openOutputStream(uri)
-                if (outputStream != null) {
-                    try {
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                        outputStream.close()
-                    } catch (e: Exception) {
-                        Log.e("SAVE_BITMAP", "saveBitmapImage: ", e)
-                    }
-                }
-                values.put(MediaStore.Images.Media.IS_PENDING, false)
-                contentResolver.update(uri, values, null, null)
-
-                Toast.makeText(this, "Saved...", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Log.e("SAVE_BITMAP", "saveBitmapImage: ", e)
-            }
-        }
-    }
-
-    private fun rotateBitmap90Degrees(bitmap: Bitmap): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(90f) // Rotate the bitmap 90 degrees
-
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
 }

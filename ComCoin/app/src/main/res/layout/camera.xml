@@ -15,32 +15,18 @@
 
     </androidx.camera.view.PreviewView>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/captureBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginStart="159dp"
         android:layout_marginEnd="153dp"
-        android:text="Capture"
+        android:background="@drawable/cam_button"
+        android:backgroundTint="#B4B0B0"
         app:layout_constraintBottom_toBottomOf="@+id/captureImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.85" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="176dp"
-        android:layout_height="59dp"
-        android:layout_marginTop="10dp"
-        android:background="#00000000"
-        android:fontFamily="sans-serif-light"
-        android:gravity="center"
-        android:text="The picture will be saved in your gallery"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/captureBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

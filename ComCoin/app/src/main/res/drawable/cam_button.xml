@@ -1,0 +1,11 @@
+<!-- res/drawable/camera_button_outer_circle.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Outline of the circle -->
+    <size android:width="100dp" android:height="100dp" />
+    <stroke
+        android:width="8dp"
+        android:color="#D3D3D3" /> <!-- Light-gray color for the circumference -->
+    <solid android:color="@android:color/transparent"/> <!-- No fill inside the circle -->
+</shape>

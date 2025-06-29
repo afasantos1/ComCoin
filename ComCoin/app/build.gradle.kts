@@ -20,6 +20,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+
+
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -68,6 +71,12 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-storage")
+
+
+        implementation(libs.pytorch.android.v1131)
+        implementation(libs.pytorch.android.torchvision.v1131)
+
+
 
 
 }

@@ -6,15 +6,6 @@
     android:layout_height="match_parent"
     android:background="#E0E0E0">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="49dp" />
-
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
@@ -35,13 +26,13 @@
             app:layout_marginBaseline="10dp">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/backBtn"
+                android:id="@+id/showCoinsBtn"
                 style=""
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:backgroundTint="@color/df_red"
-                android:text="@string/back" />
+                android:backgroundTint="#BFAC0D"
+                android:text="@string/list" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -64,17 +55,39 @@
         </LinearLayout>
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/noDeleteText"
-        style="@style/RoundCorner"
-        android:layout_width="315dp"
-        android:layout_height="31dp"
-        android:layout_marginBottom="30dp"
-        android:background="#50FFEB3B"
-        android:gravity="center"
-        android:text="Please do not erase the pictures from your gallery"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="49dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/scanBtn3"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:background="@drawable/cam_button"
+        android:backgroundTint="#646464"
+        android:clickable="false"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/scanBtn2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="VisualLintOverlap" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/scanBtn2"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/cam_button"
+        android:backgroundTint="#878585"
+        android:contentDescription="@string/scan_button"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="VisualLintOverlap,RedundantDescriptionCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

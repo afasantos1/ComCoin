@@ -15,4 +15,6 @@
     <string name="add_new">Add New</string>
     <string name="coin_picture">Coin picture</string>
     <string name="text_placeholder">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</string>
+    <string name="scan_button">scan Button</string>
+    <string name="list">List</string>
 </resources>

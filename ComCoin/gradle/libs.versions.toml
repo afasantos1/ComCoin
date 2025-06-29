@@ -10,6 +10,9 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.9.2"
 constraintlayout = "2.1.4"
+pytorch_android = "1.7.0"
+pytorch_android_torchvision = "1.13.1"
+pytorch_androidVersion = "1.13.1"
 rules = "1.6.1"
 
 [libraries]
@@ -29,6 +32,10 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
+pytorch_android = { module = "org.pytorch:pytorch_android", version.ref = "pytorch_android" }
+pytorch_android-v1131 = { module = "org.pytorch:pytorch_android", version.ref = "pytorch_androidVersion" }
+pytorch_android_torchvision = { module = "org.pytorch:pytorch_android_torchvision", version.ref = "pytorch_android" }
+pytorch_android_torchvision-v1131 = { module = "org.pytorch:pytorch_android_torchvision", version.ref = "pytorch_android_torchvision" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

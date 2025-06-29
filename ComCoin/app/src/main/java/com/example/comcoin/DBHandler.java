@@ -5,10 +5,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
 public class DBHandler extends SQLiteOpenHelper {
+
+    // Handler da Database - Fonte: https://www.geeksforgeeks.org/how-to-create-and-add-data-to-sqlite-database-in-android/
+    // O código base é similar, apenas com algumas alterações de forma a ser ajustado à base de dados necessária na ComCoin. Decidi deixar os comentários originais porque me pareceram bastante explicativos
+
 
     // creating a constant variables for our database.
     // below variable is for our database name.
@@ -51,7 +56,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + NAME_COL + " TEXT,"
                 + DESCRIPTION_COL + " TEXT,"
-                + IMAGE_COL + " INTEGER,"
+                + IMAGE_COL + " TEXT,"
                 + ISCOMMEMORATIVE_COL + " BOOLEAN)";
 
         // at last we are calling a exec sql 
@@ -132,27 +137,45 @@ public class DBHandler extends SQLiteOpenHelper {
         return coinsArrayList;
     }
 
-    public void deleteCoin(String coinName){
+    public void deleteCoin(String coinImage){
         SQLiteDatabase db = this.getWritableDatabase();
 
         // on below line we are calling a method to delete our
         // course and we are comparing it with our course name.
-        db.delete(TABLE_NAME, "name=?", new String[]{coinName});
+        db.delete(TABLE_NAME, "image=?", new String[]{coinImage});
         db.close();
     }
 
-    public void updateCoin(String originalName, String novoNome, String novaDesc, String novaImgURI, boolean novoCom){
+    public void checkCoinExists(String name, String image) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE name=? AND image=?", new String[]{name, image});
 
+        if (cursor.getCount() > 0) {
+            Log.d("CheckCoin", "Coin exists in the database.");
+        } else {
+            Log.d("CheckCoin", "Coin does not exist in the database.");
+        }
+
+        cursor.close();
+    }
+
+
+    public void updateCoin(String originalName, String originalImg, String novoNome, String novaDesc, String novaImgURI, boolean novoCom) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
+        // Check if the coin exists first
+        checkCoinExists(originalName, originalImg);
+
+        ContentValues values = new ContentValues();
         values.put(NAME_COL, novoNome);
         values.put(IMAGE_COL, novaImgURI);
         values.put(DESCRIPTION_COL, novaDesc);
-        values.put(ISCOMMEMORATIVE_COL, novoCom);
+        values.put(ISCOMMEMORATIVE_COL, novoCom ? 1 : 0); // Assuming you store BOOLEAN as INTEGER
 
-        db.update(TABLE_NAME, values, "name=?", new String[]{originalName});
+        int rowsUpdated = db.update(TABLE_NAME, values, "name=? AND image=?", new String[]{originalName, originalImg});
+        Log.d("ROWS UPDATED", Integer.toString(rowsUpdated));
         db.close();
-
     }
+
+
 }
